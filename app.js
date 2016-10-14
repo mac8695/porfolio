@@ -8,14 +8,16 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var nodemailer = require('nodemailer');
+
  var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+//app.get('/contact', routes.contact);
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -56,5 +58,37 @@ app.use(function(err, req, res, next) {
   });
 });
 
+
+
+app.post('/contact', function (req, res) {
+  var mailOpts, smtpTrans;
+  //Setup Nodemailer transport.
+  smtpTrans = nodemailer.createTransport('SMTP', {
+    service: 'Gmail',
+    auth: {
+      user: "maheshchavan0806@gmail.com",
+      pass: "Mahesh123"
+    }
+  });
+  //Mail options
+  mailOpts = {
+    from: req.body.name + ' &lt;' + req.body.email + '&gt;', //grab form data from the request body object
+    to: 'maheshchavan0806@gmail.com',
+    subject: 'Website contact form',
+    text: req.body.message
+  };
+  smtpTrans.sendMail(mailOpts, function (error, response) {
+    //Email not sent
+    if (error) {
+        console.log(error);
+
+        res.render('contact', { title: 'Mahesh Chavan - Contact', msg: 'Error occured, message not sent.', err: true, page: 'contact' })
+    }
+    // Email sent
+    else {
+      res.render('contact', { title: 'Raging Flame Laboratory - Contact', msg: 'Message sent! Thank you.', err: false, page: 'contact' })
+    }
+  });
+});
 
 module.exports = app;

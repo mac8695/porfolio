@@ -6,6 +6,11 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+
+exports.contact = function(req, res){
+  res.render('contact', { title: 'Raging Flame Laboratory - Contact', page: 'contact' })
+};
+
 /*
 var nodemailer = require('nodemailer');
 
